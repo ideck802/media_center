@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<title>Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="css/index.css">
+<script src="https://kit.fontawesome.com/1fe06c8338.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/eel.js"></script>
+
+<body>
+  <div id="context_menu" class="context-menu">
+    <p>menu</p>
+  </div>
+
+  <div class="big-view" id="big_view">
+    <div class="media" id="media">
+      <div id="files_explorer" class="file-explore main-interactable"
+        fwd-intrct="changeInteractLayer('.files-interactable')">
+      </div>
+      <div id="media_playlist" class="playlist main-interactable" rowbreak="true"></div>
+    </div>
+    <div class="radio" id="radio">
+      <div class="left">
+        <div class="top">buttons</div>
+        <div class="speaker">
+          <div class="grill"></div>
+        </div>
+      </div>
+      <button class="settings-interactable" onclick="chngRadioPath('add', 'movie', ` + i + `)">+</button>
+      <div class="stations" id="stations"></div>
+    </div>
+    <div class="games" id="games">
+      games
+    </div>
+  </div>
+
+
+  <div class="settings" id="settings">
+    <div class="settings-ring-1">
+      <div class="settings-ring-2">
+        <div class="settings-ring-3">
+          <div class="header">
+            <h3>Settings</h3>
+            <button onclick="saveSettings()">Save</button>
+            <button class="settings-interactable" onclick="closeSettings()" fwd-intrct="closeSettings()">Cancel</button>
+          </div>
+          <h4>Tab Settings</h4>
+          <div class="tab-settings" id="tab_settings"></div>
+          <h4>Metadata</h4>
+          <button class="main-interactable" onclick="eel.dwnld_metadata('all')" fwd-intrct="eel.dwnld_metadata()">Scan &
+            download all movie and show metadata</button>
+          <h4>Media Paths</h4>
+          <div class="path-setting movie-paths" id="movie_paths"></div>
+          <div class="path-setting show-paths" id="show_paths"></div>
+          <div class="path-setting music-paths" id="music_paths"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="browse-dialog" id="browse_dialog"></div>
+
+  <div class="metadata-list" id="metadata_list"></div>
+
+
+  <div class="toolbar">
+    <div id="progressbar" class="progressbar"></div>
+    <div class="media-buttons">
+      <button class="main-interactable" onclick="eel.skip_prev()" fwd-intrct="eel.skip_prev()"><i
+          class="fa-solid fa-backward-step"></i></button>
+      <button class="main-interactable" id="play_btn" onclick="eel.pause()" fwd-intrct="eel.pause()"><i
+          class="fa-solid fa-play"></i></button>
+      <button class="main-interactable" onclick="eel.skip_next()" fwd-intrct="eel.skip_next()"><i
+          class="fa-solid fa-forward-step"></i></button>
+      <button class="main-interactable" onclick="eel.stop()" fwd-intrct="eel.stop()"><i
+          class="fa-solid fa-stop"></i></button>
+      <div class="spacer"></div>
+      <button class="main-interacable" onclick="eel.reenter_fullscreen()"><i class="fa-solid fa-expand"></i></button>
+      <button class="main-interactable" onclick="eel.toggle_loop()" fwd-intrct="eel.toggle_loop()"><i
+          class="fa-solid fa-repeat"></i></button>
+      <select name="subs" id="subs" class="main-interactable"
+        onchange="eel.set_subs(this.options[this.selectedIndex].value)">
+      </select>
+      <select name="audio" id="audio_list" class="main-interactable"
+        onchange="eel.set_audio_track(this.options[this.selectedIndex].value)" rowbreak="true">
+      </select>
+      <div class="spacer"></div>
+      <div class="tab-btns" id="tab_btns"></div>
+      <div class="spacer"></div>
+      <button class="main-interactable" onclick="openSettings()" fwd-intrct="openSettings()"><i
+          class="fa-solid fa-gear"></i></button>
+      <button onclick="toggleGuiSize()" id="resize_btn"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+  </div>
+  <script type="text/javascript" src="/js/context_menu.js"></script>
+  <script type="text/javascript" src="/js/navigation.js"></script>
+  <script type="text/javascript" src="/js/dialog.js"></script>
+  <script type="text/javascript" src="/js/settings.js"></script>
+  <script type="text/javascript" src="/js/radio.js"></script>
+  <script type="text/javascript" src="/js/games.js"></script>
+  <script type="text/javascript" src="/js/index.js"></script>
+</body>
+
+</html>

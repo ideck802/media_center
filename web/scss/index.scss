@@ -1,0 +1,503 @@
+$accent-color-1: #61d800;
+$accent-color-2: #c8ff00;
+$back-color-1: #535353;
+$back-color-2: #2e2e2e;
+$back-color-3: #1f1f1f;
+$black: #000;
+$translucent-1: #000000c0;
+$translucent-2: #0000009a;
+
+body {
+	display: flex;
+
+	flex-direction: column;
+
+	height: 100%;
+
+	margin: 0;
+
+	overflow: hidden;
+
+	background: $back-color-2;
+}
+
+.context-menu {
+	display: none;
+
+	position: absolute;
+
+	z-index: 1;
+
+	width: 15%;
+	height: 150px;
+
+	padding: 5px 4px;
+
+	background-color: $back-color-1;
+}
+
+.context-menu.open-click {
+	display: block;
+}
+
+.context-menu.open-btn {
+	display: block;
+
+	height: 100%;
+}
+
+.nav-highlighted {
+	/* stylelint-disable-next-line declaration-no-important */
+	border: 1px solid $accent-color-2 !important;
+}
+
+.big-view {
+	width: 100%;
+	height: calc( 100vh - 3.6em );
+
+	overflow: hidden;
+
+	>.media {
+		display: flex;
+
+		flex-direction: row;
+
+		width: 100%;
+		height: 100%;
+
+		.file-explore {
+			display: flex;
+
+			flex-direction: column;
+
+			width: 66.6%;
+			height: inherit;
+
+			border-right: 1px solid $accent-color-1;
+
+			.explore-bar {
+				display: flex;
+
+				flex-direction: row;
+
+				height: 2em;
+
+				border-bottom: 1px solid $accent-color-1;
+			}
+
+			.fileslist {
+				display: flex;
+
+				position: relative;
+
+				flex-direction: row;
+				flex-wrap: wrap;
+
+				width: 100%;
+				height: inherit;
+
+				overflow-y: auto;
+
+				.folder,
+				.file {
+					display: flex;
+
+					flex-direction: column;
+
+					width: calc( 25% - 16px );
+					height: 200px;
+
+					margin: 2px;
+
+					padding: 5px;
+
+					border: 1px solid $accent-color-1;
+
+					border-radius: 5px;
+
+					img {
+						height: 100px;
+					}
+				}
+			}
+		}
+
+		.playlist {
+			display: flex;
+
+			flex-direction: column;
+
+			width: 33.3%;
+			height: inherit;
+
+			overflow-y: auto;
+
+			.media {
+				display: flex;
+
+				flex-direction: row;
+
+				border-bottom: 1px solid $accent-color-1;
+
+				p {
+					width: 100%;
+
+					height: 1em;
+
+					margin: 0;
+
+					overflow: hidden;
+				}
+			}
+
+			.playing {
+				background: $accent-color-1;
+			}
+		}
+	}
+
+	.radio {
+		display: none;
+
+		flex-direction: row;
+
+		height: 100%;
+
+		.left {
+			display: flex;
+
+			flex-direction: column;
+
+			width: 50%;
+
+			height: 100%;
+
+			border-right: 1px solid $accent-color-1;
+
+			.speaker {
+				display: flex;
+
+				position: relative;
+
+				align-items: center;
+				justify-content: center;
+
+				width: calc( 100% - 40px );
+
+				height: calc( 75% - 40px );
+
+				padding: 20px;
+
+				.grill {
+					height: 100%;
+
+					aspect-ratio: 1 / 1;
+
+					border: 5px solid $black;
+
+					border-radius: 50%;
+
+					background-color: $black;
+					background-image: linear-gradient( 45deg, transparent 40%, $back-color-3 50%, transparent 60%, transparent 100% ),
+						linear-gradient( -45deg, transparent 40%, $back-color-3 50%, transparent 60%, transparent 100% );
+					background-position: 4px 4px;
+					background-size: 8px 8px;
+				}
+			}
+		}
+
+		.stations {
+			display: flex;
+
+			flex-direction: column;
+
+			width: 50%;
+
+			height: 100%;
+		}
+	}
+
+	.games {
+		display: none;
+	}
+}
+
+.settings {
+	display: none;
+
+	position: absolute;
+
+	z-index: 2;
+
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+
+	background: $translucent-1;
+
+	.settings-ring-1 {
+		width: calc( 100% - 60px );
+		height: calc( 100% - 60px );
+
+		margin: 25px;
+
+		border-right: 5px solid $accent-color-1;
+		border-bottom: 5px solid $accent-color-1;
+		border-image: linear-gradient( 45deg, transparent 25%, $accent-color-1 25%, $accent-color-1 75%, $accent-color-1 99%, transparent 99% ) 5;
+
+		background: transparent;
+
+		.settings-ring-2 {
+			width: calc( 100% - 60px );
+			height: calc( 100% - 60px );
+
+			margin: 25px;
+
+			border-top: 5px solid;
+			border-bottom: 5px solid;
+			border-image: linear-gradient( 45deg, transparent 1%, $accent-color-1 1%, $accent-color-1 50%, transparent 50%, transparent 75%, $accent-color-1 75% ) 5;
+
+			background: transparent;
+
+			.settings-ring-3 {
+				flex-direction: column;
+
+				width: calc( 100% - 70px );
+				height: calc( 100% - 65px );
+
+				margin: 25px;
+
+				padding: 5px;
+
+				overflow-y: scroll;
+
+				border-radius: 20px;
+
+				background: $back-color-1;
+
+				.header {
+					display: flex;
+
+					flex-direction: row;
+
+					h3 {
+						width: 100%;
+					}
+				}
+
+				>h4 {
+					margin: 0;
+
+					padding-top: 5px;
+
+					border-top: 4px solid;
+					border-image: linear-gradient( to right, $accent-color-2 5px, transparent 5px, transparent 10px, $accent-color-2 10px, transparent 100% ) 1;
+				}
+
+				.path-setting {
+					display: flex;
+
+					flex-direction: row;
+
+					margin-bottom: 15px;
+
+					h4 {
+						writing-mode: vertical-rl;
+						text-orientation: mixed;
+
+						transform: rotateZ( 180deg );
+					}
+
+					.paths-list {
+						display: flex;
+
+						flex-direction: column;
+
+						width: 100%;
+
+						.path-block {
+							width: 100%;
+
+							input {
+								width: 50%;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.browse-dialog {
+	display: none;
+
+	position: absolute;
+
+	z-index: 3;
+
+	top: 0;
+	left: 0;
+
+	flex-direction: column;
+
+	width: 100%;
+	height: 100%;
+
+	background: $back-color-2;
+
+	.explore-bar {
+		display: flex;
+
+		flex-direction: row;
+
+		height: 2em;
+
+		border-bottom: 1px solid $accent-color-1;
+	}
+
+	.fileslist {
+		display: flex;
+
+		position: relative;
+
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		width: 100%;
+		height: inherit;
+
+		overflow-y: auto;
+
+		.folder,
+		.file {
+			display: flex;
+
+			flex-direction: column;
+
+			width: calc( 25% - 16px );
+			height: 200px;
+
+			margin: 2px;
+
+			padding: 5px;
+
+			border: 1px solid $accent-color-1;
+
+			border-radius: 5px;
+		}
+	}
+}
+
+.metadata-list {
+	display: none;
+
+	position: absolute;
+
+	z-index: 3;
+
+	top: 0;
+	left: 0;
+
+	flex-direction: column;
+
+	width: 100%;
+	height: 100%;
+
+	overflow-y: auto;
+
+	background: $back-color-2;
+}
+
+.toolbar {
+	display: flex;
+
+	flex-direction: column;
+
+	width: 100%;
+	height: 140px;
+
+	border-top: 2px solid $accent-color-1;
+
+	.progressbar {
+		display: flex;
+
+		flex-direction: row;
+
+		width: 100%;
+		height: 20px;
+
+		background-color: green;
+
+		p {
+			margin: 0;
+		}
+
+		.marker-cont {
+			width: 100%;
+
+			border-right: 1px solid $accent-color-2;
+			border-left: 1px solid $accent-color-2;
+
+			.marker {
+				border-right: 2px solid $accent-color-1;
+
+				color: transparent;
+			}
+		}
+	}
+
+	.media-buttons {
+		display: flex;
+
+		flex-direction: row;
+
+		width: 100%;
+
+		padding-top: 5px;
+
+		.spacer {
+			width: 100%;
+		}
+
+		button {
+			border: 0;
+
+			background: transparent;
+
+			color: $accent-color-2;
+
+			white-space: nowrap;
+
+			i {
+				font-size: 1.5em;
+			}
+		}
+
+		.tab-btns {
+			display: flex;
+
+			flex-direction: row;
+
+			.main-tab-btn {
+				margin-top: -5px;
+				margin-right: 0.5em;
+				margin-left: 0.5em;
+
+				border-right: 1px solid $accent-color-1;
+				border-bottom: 1px solid $accent-color-1;
+				border-left: 1px solid $accent-color-1;
+
+				border-radius: 0 0 5px 5px;
+			}
+
+			.active {
+				background: $accent-color-1;
+
+				color: $back-color-2;
+			}
+		}
+	}
+}
