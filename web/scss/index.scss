@@ -4,6 +4,7 @@ $back-color-1: #535353;
 $back-color-2: #2e2e2e;
 $back-color-3: #1f1f1f;
 $black: #000;
+$red: #af0000;
 $translucent-1: #000000c0;
 $translucent-2: #0000009a;
 
@@ -163,6 +164,8 @@ body {
 
 		height: 100%;
 
+		background: $back-color-1;
+
 		.left {
 			display: flex;
 
@@ -171,8 +174,6 @@ body {
 			width: 50%;
 
 			height: 100%;
-
-			border-right: 1px solid $accent-color-1;
 
 			.speaker {
 				display: flex;
@@ -206,14 +207,148 @@ body {
 			}
 		}
 
-		.stations {
+		.right {
 			display: flex;
 
-			flex-direction: column;
+			flex-direction: row;
 
-			width: 50%;
+			width: calc( 50% - 30px );
+			height: calc( 100% - 30px );
 
-			height: 100%;
+			margin: 5px;
+			padding: 10px;
+
+			overflow: hidden;
+
+			border-radius: 50px;
+
+			background: $back-color-2;
+
+			.tuner {
+				display: flex;
+
+				flex-direction: row;
+
+				height: 100%;
+
+				.indicator-rail {
+					position: relative;
+
+					height: calc( 100% - 20px );
+
+					padding-right: 1px;
+					padding-left: 1px;
+
+					background-color: $back-color-1;
+
+					.indicator {
+						width: 10px;
+						height: 6px;
+
+						margin-top: 5px;
+
+						transition: margin-top 1s;
+
+						background: $red;
+
+						-webkit-box-shadow: 0 1px 2px $black;
+						-moz-box-shadow: 0 1px 2px $black;
+						box-shadow: 0 1px 2px $black;
+
+						color: transparent;
+
+						font-size: 0.1;
+					}
+				}
+
+				.indicator-rail:before {
+					content: '';
+
+					position: absolute;
+
+					right: 0;
+					left: 0;
+
+					width: 100%;
+					height: 100%;
+
+					-webkit-box-shadow: inset -1px 2px 5px $black;
+					-moz-box-shadow: inset -1px 2px 5px $black;
+					box-shadow: inset -1px 2px 5px $black;
+				}
+
+				.channels {
+					display: flex;
+
+					flex-direction: column;
+
+					p {
+						display: flex;
+
+						flex-direction: row;
+						align-items: center;
+
+						height: 24px;
+
+						margin: 0;
+					}
+				}
+
+				.am {
+					margin-right: 2px;
+
+					p {
+						justify-content: flex-end;
+					}
+				}
+
+				.pm {
+					margin-left: 2px;
+
+					p {
+						justify-content: flex-start;
+					}
+				}
+			}
+
+			.stations {
+				display: flex;
+
+				z-index: 2;
+
+				flex-direction: column;
+
+				height: 100%;
+
+				margin-left: -79px;
+				padding-top: 24px;
+
+				.station {
+					display: flex;
+
+					flex-direction: row;
+
+					height: 24px;
+
+					.play {
+						width: 79px;
+
+						margin-right: 2px;
+
+						border: 0;
+						border-right: 2px solid $back-color-1;
+						border-radius: 5px;
+
+						background: transparent;
+
+						color: transparent;
+					}
+				}
+
+				.add {
+					margin-left: 79px;
+				}
+			}
 		}
 	}
 

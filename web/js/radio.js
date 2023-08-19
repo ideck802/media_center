@@ -1,12 +1,13 @@
 /* eslint-disable quotes */
 const stationsList = document.getElementById('stations');
+const indicator = document.getElementById('station_indicator');
 
 async function renderStations() {
   const list = await eel.get_stations()();
   let html = '';
   for (let i = 0; i < list.length; i++) {
     const station = `<div class="station">
-    <button onclick="eel.play_radio(` + i + `)">Play</button>
+    <button class="play" onclick="changeStation(` + i + `)">Play</button>
     <input type="text" value="` + list[i].path + `"/>
     <button
       class="settings-interactable"
@@ -15,7 +16,20 @@ async function renderStations() {
     </div>`;
     html = html.concat(station);
   }
+  html = html.concat(`<button class="add settings-interactable" onclick="chngRadioPath('add', 'movie', 0)">
+    +</button>`);
   stationsList.innerHTML = html;
+}
+
+const indicatorOffset = 24;
+const indStationHeight = 24;
+const indHeight = 6;
+
+function changeStation(i) {
+  indicator.style.marginTop = (indicatorOffset + ((i + 1) * indStationHeight) - (indStationHeight / 2) -
+    (indHeight / 2)) + 'px';
+
+  eel.play_radio(i);
 }
 
 async function chngRadioPath(action, type, index, path = '/') {
