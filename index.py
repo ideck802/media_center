@@ -188,6 +188,11 @@ def save_stations():
         radio_ini.write(json.dumps(radio_stations))
         radio_ini.close()
 
+if platform == 'linux':
+    vlc_prefix = 'file://'
+elif platform == 'win32':
+    vlc_prefix = 'file:///'
+
 @eel.expose
 def load_stations():
     global radio_stations
@@ -199,6 +204,15 @@ def load_stations():
         print('HEY: ' + str(station))
         if (any(station['path'].endswith(string) for string in ['mp3', 'mp4', 'mkv', 'm4a', 'ogg', 'wav'])):
             station['length'] = round(AudioFileClip(station['path']).duration)
+        elif (station['path'].endswith('.lst')):
+            plylst_file = open(station['path'], 'r')
+            contents = plylst_file.read()
+            plylst_file.close()
+            data = json.loads(contents)
+            station['filesCnt'] = len(data) - 1
+            path = data[station['fileAt']]['path'].replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+            station['length'] = round(AudioFileClip(path).duration)
+
     print(radio_stations)
     eel.spawn(radio_loop)
 
@@ -225,6 +239,17 @@ def radio_loop():
                     station['time'] = 0
                 else:
                     station['time'] += 1
+            elif (station['path'].endswith('.lst')):
+                if (station['time'] == station['length']):
+                    station['time'] = 0
+                    if (station['fileAt'] == station['filesCnt']):
+                        station['fileAt'] = 0
+                    else:
+                        station['fileAt'] += 1
+                    path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+                    station['length'] = round(AudioFileClip(path).duration)
+                else:
+                    station['time'] += 1
         eel.sleep(1)
 
 radio_playing = [False, None]
@@ -235,11 +260,15 @@ def play_radio(station):
     global radio_playing
     if radio_playing[0]:
         radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
+        radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
+        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+        radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
         save_stations()
     radio_playing = [True, station]
     info = radio_stations[station]
     media_list_player.set_playback_mode(vlc.PlaybackMode.loop)
-    play_file(info['path'], info['time'])
+    print('right before play_file')
+    play_file(info['path'], info['time'], info['fileAt'])
 
 def get_subs():
     subs = media_player.video_get_spu_description()
@@ -568,6 +597,13 @@ def get_playlist():
         media_files.append(media_info)
     return media_files
 
+@eel.expose
+def save_playlist(holder, name, holder2, location):
+    eel.closeBrowseDialog('browse_dialog')
+    with open(location + '/' + name + '.lst', 'w') as plylst_file:
+        plylst_file.write(json.dumps(get_playlist()))
+        plylst_file.close()
+
 def clear_playlist():
     global playlist
     playlist = vlc_inst.media_list_new()
@@ -609,6 +645,9 @@ def stop():
     global radio_stations
     if radio_playing[0]:
         radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
+        radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
+        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+        radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
         save_stations()
         radio_playing[0] = False
     media_list_player.stop()
@@ -706,13 +745,23 @@ def enqueue_folder(path):
     mainRenderUpdate()
 
 @eel.expose
-def play_file(path, time = None):
+def play_file(path, time = None, list_pos = None):
     media_list_player.stop()
     clear_playlist()
-    playlist.add_media(vlc_inst.media_new(path))
+    if (path.endswith('.lst')):
+        plylst_file = open(path, 'r')
+        contents = plylst_file.read()
+        plylst_file.close()
+        data = json.loads(contents)
+        print(data)
+        for file in data:
+            playlist.add_media(vlc_inst.media_new(file['path']))
+    else:
+        playlist.add_media(vlc_inst.media_new(path))
     eel.drawPlayBtn('play')
     media_list_player.play()
     if not time == None:
+        media_list_player.play_item_at_index(list_pos)
         media_player.set_time(time * 1000)
     eel.sleep(1)
     get_subs()
@@ -724,7 +773,16 @@ def play_file(path, time = None):
 
 @eel.expose
 def enqueue_file(path):
-    playlist.add_media(vlc_inst.media_new(path))
+    if (path.endswith('.lst')):
+        plylst_file = open(path, 'r')
+        contents = plylst_file.read()
+        plylst_file.close()
+        data = json.loads(contents)
+        print(data)
+        for file in data:
+            playlist.add_media(vlc_inst.media_new(file['path']))
+    else:
+        playlist.add_media(vlc_inst.media_new(path))
     media_list_player.play()
     mainRenderUpdate()
 

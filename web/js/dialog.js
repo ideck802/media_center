@@ -1,16 +1,34 @@
 /* eslint-disable quotes */
+const nameDialog = document.getElementById('name_dialog');
+const nameBox = document.getElementById('name_box');
 
-async function openBrowseDialog(browseDialog, pickType, mediaType, index, slctFunc) {
+function openBrowseDialog(browseDialog, pickType, mediaType, index, slctFunc) {
   //let data = await eel.read_music_files('/')();
   drawDialogContent('show-drives', browseDialog, pickType, mediaType, index, slctFunc);
   browseDialog = document.getElementById(browseDialog);
   browseDialog.style.display = 'flex';
 }
 
+eel.expose(closeBrowseDialog);
 function closeBrowseDialog(browseDialog) {
   browseDialog = document.getElementById(browseDialog);
   console.log(browseDialog);
   browseDialog.style.display = 'none';
+}
+
+function openNameDialog() {
+  nameDialog.style.display = 'flex';
+}
+
+function closeNameDialog() {
+  nameDialog.style.display = 'none';
+}
+
+function submitName() {
+  closeNameDialog();
+  let name = nameBox.value;
+  nameBox.value = '';
+  openBrowseDialog('browse_dialog', 'folder', name, 0, 'eel.save_playlist');
 }
 
 async function drawDialogContent(startPath, drawAt, pickType, pathType, pathIndex, slctFunc) {
@@ -25,7 +43,7 @@ async function drawDialogContent(startPath, drawAt, pickType, pathType, pathInde
   } else {
     curPath = fileList[0].path.replace('\\', '/');
   }
-  console.log('curpath: ' + curPath);
+  //console.log('curpath: ' + curPath);
   let lastIndex = curPath.lastIndexOf('/');
   let exploreBar = `<div id='explore_bar' class='explore-bar'>
   <button 
@@ -42,7 +60,7 @@ async function drawDialogContent(startPath, drawAt, pickType, pathType, pathInde
     path = path.join('\\\/');
     if (fileList[i].type == 'folder') {
       let folderObj = '';
-      console.log(curPath);
+      //console.log(curPath);
       folderObj = `<div
         class='folder files-interactable'
         fwd-intrct="drawDialogContent('` + path + `','` + drawAt + `','` + pickType + `','` + pathType +
@@ -90,12 +108,16 @@ let currentDialogDir = 'show-drives';
 function goBackDialog(drawAt, pickType, mediaType, index, slctFunc) {
   let parentDir = currentDialogDir.split('/');
   parentDir.pop();
-  console.log(parentDir);
   parentDir = parentDir.join('/');
-  if (parentDir == '') {
-    drawDialogContent('/', drawAt, pickType, mediaType, index, slctFunc);
-  } else if (/^([A-Z]|[a-z]):$/.test(parentDir)) {
+  console.log(parentDir);
+  if (/^([A-Z]|[a-z]):$/.test(parentDir)) {
+    parentDir = parentDir + '/';
+  }
+  if (/^([A-Z]|[a-z]):$/.test(currentDialogDir) || /^([A-Z]|[a-z]):\/$/.test(currentDialogDir) ||
+    currentDialogDir == 'DRIVES/' || currentDialogDir == '/') {
     drawDialogContent('show-drives', drawAt, pickType, mediaType, index, slctFunc);
+  } else if (parentDir == '') {
+    drawDialogContent('/', drawAt, pickType, mediaType, index, slctFunc);
   } else {
     drawDialogContent(parentDir, drawAt, pickType, mediaType, index, slctFunc);
   }
@@ -110,5 +132,6 @@ async function getDialogContent(path) {
     currentDialogDir = path;
     json = await eel.read_music_files(path)();
   }
+  console.log(currentDialogDir);
   return json;
 }

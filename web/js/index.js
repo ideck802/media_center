@@ -29,6 +29,10 @@ async function toggleGuiSize() {
   }
 }
 
+function savePlaylist() {
+  openNameDialog();
+}
+
 eel.expose(drawResizeArrow);
 function drawResizeArrow(state) {
   if (state == 'expand') {

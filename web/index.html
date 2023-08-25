@@ -18,11 +18,27 @@
       <div id="files_explorer" class="file-explore main-interactable"
         fwd-intrct="changeInteractLayer('.files-interactable')">
       </div>
-      <div id="media_playlist" class="playlist main-interactable" rowbreak="true"></div>
+      <div class="playlist">
+        <button onclick="savePlaylist()">Save playlist</button>
+        <div id="media_playlist" class="main-interactable" rowbreak="true"></div>
+      </div>
     </div>
     <div class="radio" id="radio">
       <div class="left">
-        <div class="top">buttons</div>
+        <div class="top">
+          <p>Vol-</p>
+          <div class="vol-dial dial">
+            <div class="inner">
+              <div class="vol-marker">o</div>
+            </div>
+          </div>
+          <p>Vol+</p>
+          <button class="prev-btn" onclick="changeStation('prev')">Prev</button>
+          <div class="tune-dial dial">
+            <div class="inner"></div>
+          </div>
+          <button class="next-btn" onclick="changeStation('next')">Next</button>
+        </div>
         <div class="speaker">
           <div class="grill"></div>
         </div>
@@ -112,6 +128,12 @@
   </div>
 
   <div class="browse-dialog" id="browse_dialog"></div>
+
+  <div class="name-dialog" id="name_dialog">
+    <p>Pick a name</p>
+    <input type="text" id="name_box" />
+    <button class="submit" onclick="submitName()">Submit</button>
+  </div>
 
   <div class="metadata-list" id="metadata_list"></div>
 

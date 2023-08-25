@@ -4,6 +4,7 @@ $back-color-1: #535353;
 $back-color-2: #2e2e2e;
 $back-color-3: #1f1f1f;
 $black: #000;
+$white: #e9e9e9;
 $red: #af0000;
 $translucent-1: #000000c0;
 $translucent-2: #0000009a;
@@ -175,6 +176,97 @@ body {
 
 			height: 100%;
 
+			.top {
+				display: flex;
+
+				flex-direction: row;
+				align-items: flex-end;
+				justify-content: flex-end;
+
+				margin: 5px;
+				padding: 10px;
+
+				border-radius: 40px;
+
+				background: $back-color-2;
+
+				.dial {
+					border-radius: 50%;
+
+					background: $back-color-2;
+
+					.inner {
+						position: relative;
+
+						width: calc( 100% - 10px );
+						height: calc( 100% - 10px );
+
+						margin: 5px;
+
+						border-radius: 50%;
+
+						background: $back-color-3;
+
+						overflow: hidden;
+
+						color: transparent;
+					}
+				}
+
+				p {
+					margin: 0;
+
+					color: $white;
+				}
+
+				.vol-dial {
+					width: 100px;
+					height: 100px;
+
+					border-top: 2px solid $white;
+					border-right: 3px solid $white;
+					border-bottom: 5px solid transparent;
+					border-left: 3px solid $white;
+
+					.vol-marker {
+						position: absolute;
+
+						top: -1;
+						left: calc( 50% - 2px );
+
+						width: 4px;
+						height: 13px;
+
+						transform: rotate( -60deg );
+						transform-origin: 2px 44px;
+
+						background: $back-color-1;
+					}
+				}
+
+				.prev-btn {
+					margin-left: 20px;
+				}
+
+				.tune-dial {
+					width: 50px;
+					height: 50px;
+
+					border-top: 2px solid $white;
+					border-right: 3px solid $white;
+					border-bottom: 5px solid transparent;
+					border-left: 3px solid $white;
+				}
+
+				.next-btn {
+					margin-right: 20px;
+				}
+
+				button {
+					border: 0;
+				}
+			}
+
 			.speaker {
 				display: flex;
 
@@ -220,7 +312,7 @@ body {
 
 			overflow: hidden;
 
-			border-radius: 50px;
+			border-radius: 40px;
 
 			background: $back-color-2;
 
@@ -235,9 +327,6 @@ body {
 					position: relative;
 
 					height: calc( 100% - 20px );
-
-					padding-right: 1px;
-					padding-left: 1px;
 
 					background-color: $back-color-1;
 
@@ -318,6 +407,7 @@ body {
 
 				flex-direction: column;
 
+				width: 100%;
 				height: 100%;
 
 				margin-left: -79px;
@@ -331,7 +421,7 @@ body {
 					height: 24px;
 
 					.play {
-						width: 79px;
+						min-width: 79px;
 
 						margin-right: 2px;
 
@@ -342,6 +432,12 @@ body {
 						background: transparent;
 
 						color: transparent;
+					}
+
+					p {
+						width: 100%;
+
+						margin: 0;
 					}
 				}
 
@@ -524,6 +620,15 @@ body {
 			border-radius: 5px;
 		}
 	}
+}
+
+.name-dialog {
+	display: none;
+
+	position: absolute;
+
+	top: 0;
+	left: 0;
 }
 
 .metadata-list {

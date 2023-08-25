@@ -3,7 +3,7 @@
 This is an in-development media center app written in python and js for desktop. It works on Windows and Linux (I've only tested it on kubuntu so far)
 
 Features
-- Uses vlc as the backend and eel for the gui
+- Uses vlc as the backend and eel with chrome for the gui
 - Add movie, show, and music folders
 - Auto scan and download movie and show metadata from themoviedb (can correct if wrong)
 - With subtitle and multi audio track support
@@ -18,9 +18,10 @@ It's a little janky with the gui as a separate window from the video window, but
 To launch just run the index.py file (executables coming later)
 
 Dependencies:
-- vlc
-- python-vlc
-- eel
-- pywinctl
-- moviepy
-- win32api (on windows only)
+- vlc (app)
+- python-vlc (python package)
+- eel (python package)
+- chrome or chromium (app)
+- pywinctl (python package)
+- moviepy (python package)
+- win32api (python package) (on windows only)
