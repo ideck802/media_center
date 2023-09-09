@@ -21,6 +21,8 @@ const resizeBtn = document.getElementById('resize_btn');
 
 eel.init();
 
+window.addEventListener('beforeunload', () => { eel.on_quit(); });
+
 async function toggleGuiSize() {
   if (await eel.get_shrunk_status()() == true) {
     eel.expand_gui();

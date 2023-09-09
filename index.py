@@ -9,6 +9,8 @@ import datetime
 import requests
 import re
 import pywinctl as pwc
+import flask
+import threading
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 if platform == 'win32':
     from ctypes import windll
@@ -43,6 +45,8 @@ title_bar_offset = 55
 
 video_open = False
 
+flask_app = flask.Flask(__name__)
+
 screens = pwc.getAllScreens()
 for key in screens:
     if (screens[key]['pos'].x == 0):
@@ -59,6 +63,24 @@ def init():
     eel.sleep(1)
     gui_window = pwc.getWindowsWithTitle('Template')[0]
     expand_gui()
+
+flask_thread = threading.Thread(target=lambda: flask_app.run(port=5000))
+flask_thread.setDaemon(True)
+flask_thread.start()
+
+@eel.expose
+def on_quit():
+    global radio_stations
+    print('quiting')
+    if (platform == 'win32'):
+        windll.user32.ShowWindow(windll.user32.FindWindowA(b'Shell_TrayWnd', None), 9)
+    if radio_playing[0]:
+        radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
+        radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
+        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
+        radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
+    save_stations()
+    save_playlist(None, 'was-playing', None, '/home/talking_human/QNAP_smb/coding/python/media_center/')
 
 @eel.expose
 def reenter_fullscreen():
@@ -166,11 +188,13 @@ def save_settings(data):
         ini_file.close()
     read_settings()
 
+@flask_app.get('/settings')
 @eel.expose
 def read_settings():
     global movie_paths
     global show_paths
     global music_paths
+    global run_radio
     ini_file = open('./settings.ini', 'r')
     contents = ini_file.read()
     ini_file.close()
@@ -178,10 +202,10 @@ def read_settings():
     movie_paths = data['moviePaths']
     show_paths = data['showPaths']
     music_paths = data['musicPaths']
+    run_radio = data['radioEnabled']
     return contents
     
 radio_stations = []
-run_radio = True
 
 def save_stations():
     with open('./radio_stations.ini', 'w') as radio_ini:
@@ -210,9 +234,22 @@ def load_stations():
             plylst_file.close()
             data = json.loads(contents)
             station['filesCnt'] = len(data) - 1
-            path = data[station['fileAt']]['path'].replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+            path = data[station['fileAt']]['path'].replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
             station['length'] = round(AudioFileClip(path).duration)
-
+        elif (station['path'].endswith('/')):
+            #loop through files in folder to get list of paths
+            files_list = []
+            for entry in sorted(os.scandir(station['path']), key=lambda e: (not e.is_dir(), e.name)):
+                if not entry.is_dir():
+                    file_item = {
+                        'name': entry.name,
+                        'path': entry.path,
+                        'isPlaying': False
+                    }
+                    files_list.append(file_item)
+            station['filesCnt'] = len(files_list) - 1
+            path = files_list[station['fileAt']]['path']
+            station['length'] = round(AudioFileClip(path).duration)
     print(radio_stations)
     eel.spawn(radio_loop)
 
@@ -239,14 +276,14 @@ def radio_loop():
                     station['time'] = 0
                 else:
                     station['time'] += 1
-            elif (station['path'].endswith('.lst')):
+            elif (station['path'].endswith('.lst') or station['path'].endswith('/')):
                 if (station['time'] == station['length']):
                     station['time'] = 0
                     if (station['fileAt'] == station['filesCnt']):
                         station['fileAt'] = 0
                     else:
                         station['fileAt'] += 1
-                    path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+                    path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
                     station['length'] = round(AudioFileClip(path).duration)
                 else:
                     station['time'] += 1
@@ -261,7 +298,7 @@ def play_radio(station):
     if radio_playing[0]:
         radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
         radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
-        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
         radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
         save_stations()
     radio_playing = [True, station]
@@ -586,12 +623,15 @@ def get_playlist():
         media = playlist.item_at_index(i)
         if (media.get_mrl() == cur_playing_media):
             is_playing = True
+            timeAt = round(media_player.get_time()/1000)
         else:
             is_playing = False
+            timeAt = 0
         media_info = {
             'name': os.path.splitext(media.get_meta(vlc.Meta.Title))[0],
             'path': media.get_mrl(),
-            'isPlaying': is_playing
+            'isPlaying': is_playing,
+            'time': timeAt
         }
         print(is_playing)
         media_files.append(media_info)
@@ -629,6 +669,7 @@ def get_drives():
         items.append(folder_item)
     return items
 
+@flask_app.get('/pause')
 @eel.expose
 def pause():
     player_state = media_player.get_state()
@@ -646,7 +687,7 @@ def stop():
     if radio_playing[0]:
         radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
         radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
-        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace(vlc_prefix, '')
+        path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
         radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
         save_stations()
         radio_playing[0] = False
@@ -748,6 +789,7 @@ def enqueue_folder(path):
 def play_file(path, time = None, list_pos = None):
     media_list_player.stop()
     clear_playlist()
+    print('path: ' + path)
     if (path.endswith('.lst')):
         plylst_file = open(path, 'r')
         contents = plylst_file.read()
@@ -756,6 +798,10 @@ def play_file(path, time = None, list_pos = None):
         print(data)
         for file in data:
             playlist.add_media(vlc_inst.media_new(file['path']))
+    elif (path.endswith('/')):
+        for entry in sorted(os.scandir(path), key=lambda e: (not e.is_dir(), e.name)):
+                if not entry.is_dir():
+                    playlist.add_media(vlc_inst.media_new(entry.path))
     else:
         playlist.add_media(vlc_inst.media_new(path))
     eel.drawPlayBtn('play')

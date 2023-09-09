@@ -8,14 +8,19 @@ async function renderStations() {
   const list = await eel.get_stations()();
   let html = '';
   for (let i = 0; i < list.length; i++) {
-    const fileName = list[i].path.split('/').pop().slice(0, -4);
+    let fileName = '';
+    if (list[i].path.endsWith('/')) {
+      fileName = list[i].path.split('/').at(-2);
+    } else {
+      fileName = list[i].path.split('/').pop().slice(0, -4);
+    }
     console.log(fileName);
     const station = `<div class="station">
     <button class="play" onclick="changeStation('set',` + i + `)">Play</button>
     <p>` + fileName + `</p>
     <button
       class="settings-interactable"
-      onclick="openBrowseDialog('browse_dialog', 'file', 'movie',` + i + `,'chngRadioPath')">Browse</button>
+      onclick="openBrowseDialog('browse_dialog', 'both', 'movie',` + i + `,'chngRadioPath')">Browse</button>
       <button class="settings-interactable" onclick="chngRadioPath('remove', 'movie', ` + i + `)">X</button>
     </div>`;
     html = html.concat(station);
@@ -55,7 +60,7 @@ async function chngRadioPath(action, type, index, path = '/') {
   console.log(stations);
   if (action == 'add') {
     stations.push({"path": "/", "time": 0, "length": 0, "filesCnt": 0, "fileAt": 0});
-    openBrowseDialog('browse_dialog', 'file', 'movie', stationsLen + 1 ,'chngRadioPath');
+    openBrowseDialog('browse_dialog', 'both', 'movie', stationsLen + 1 ,'chngRadioPath');
   } else if (action == 'remove') {
     stations.splice(index, 1);
   } else if (action == 'setpath') {

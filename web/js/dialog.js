@@ -72,13 +72,13 @@ async function drawDialogContent(startPath, drawAt, pickType, pathType, pathInde
       <button
         onclick="drawDialogContent('` + path + `','` + drawAt + `','` + pickType + `','` + pathType +
         `',` + pathIndex + `,'` + slctFunc + `')">Open</button>`;
-      if (pickType == 'folder') {
+      if (pickType == 'folder' || pickType == 'both') {
         folderObj = folderObj.concat(`<button
         onclick="` + slctFunc + `('setpath','` + pathType +
-        `',` + pathIndex + `,'` + path + `')">Choose folder</button>`);
+        `',` + pathIndex + `,'` + path + `/')">Choose folder</button>`);
       }
       exploreBar = exploreBar.concat(folderObj + '</div>');
-    } else if (fileList[i].type == 'file' && pickType == 'file') {
+    } else if (fileList[i].type == 'file' && pickType == 'file' || pickType == 'both') {
       let fileObj = '';
       fileObj = `<div class='file files-interactable'
         fwd-intrct="eel.enqueue_file(\`` + path + `\`)" bck-intrct="goBack()" dynamic="true" path="\`` + path + `\`">
@@ -92,9 +92,9 @@ async function drawDialogContent(startPath, drawAt, pickType, pathType, pathInde
   }
   exploreBar = exploreBar.concat(`</div>
   <div class="confirm-bar">`);
-  if (pickType == 'folder') {
+  if (pickType == 'folder' || pickType == 'both') {
     exploreBar = exploreBar.concat(`<button onclick="` + slctFunc + `('setpath','` + pathType +
-    `',` + pathIndex + `,'` + curPath.slice(0, lastIndex) + `')">
+    `',` + pathIndex + `,'` + curPath.slice(0, lastIndex) + `/')">
     Choose current path</button>`);
   }
   exploreBar = exploreBar.concat(`<button onclick="closeBrowseDialog('` + drawAt + `')" class='files-interactable' 

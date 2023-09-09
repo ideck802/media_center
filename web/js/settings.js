@@ -39,8 +39,10 @@ async function readSettings() {
   configVals.radioEnabled = json.radioEnabled;
   configVals.gamesEnabled = json.gamesEnabled;
   renderTabBtns('media');
-  eel.load_stations();
-  renderStations();
+  if (configVals.radioEnabled) {
+    eel.load_stations();
+    renderStations();
+  }
 }
 
 function renderMovieSettings() {
@@ -121,6 +123,10 @@ function chngTabSettings(e, varName) {
   configVals[varName] = e.checked;
   e.checked = e.checked;
   renderTabBtns('media');
+  if (varName == 'radioEnabled' && configVals[varName] == true) {
+    eel.load_stations();
+    renderStations();
+  }
 }
 
 function chngPath(action, type, index, path = '/') {
