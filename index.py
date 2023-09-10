@@ -63,6 +63,8 @@ def init():
     eel.sleep(1)
     gui_window = pwc.getWindowsWithTitle('Template')[0]
     expand_gui()
+    if (play_on_open):
+        play_file(sync_path + 'was-playing.lst')
 
 flask_thread = threading.Thread(target=lambda: flask_app.run(port=5000))
 flask_thread.setDaemon(True)
@@ -80,7 +82,7 @@ def on_quit():
         path = media_player.get_media().get_mrl().replace('%20', ' ').replace('%21', '!').replace('%27', "'").replace('%26', '&').replace(vlc_prefix, '')
         radio_stations[radio_playing[1]]['length'] = round(AudioFileClip(path).duration)
     save_stations()
-    save_playlist(None, 'was-playing', None, '/home/talking_human/QNAP_smb/coding/python/media_center/')
+    save_playlist(None, 'was-playing', None, sync_path)
 
 @eel.expose
 def reenter_fullscreen():
@@ -101,6 +103,8 @@ def move_vlc_window():
         video_window.resizeTo(500, 500)
         media_player.set_fullscreen(True)
     #video_window.watchdog.start(isActiveCB=bring_gui_front)
+
+is_hidden = False
 
 def bring_gui_front(active = None):
     if (not is_hidden):
@@ -195,6 +199,8 @@ def read_settings():
     global show_paths
     global music_paths
     global run_radio
+    global sync_path
+    global play_on_open
     ini_file = open('./settings.ini', 'r')
     contents = ini_file.read()
     ini_file.close()
@@ -203,6 +209,8 @@ def read_settings():
     show_paths = data['showPaths']
     music_paths = data['musicPaths']
     run_radio = data['radioEnabled']
+    sync_path = data['syncPath']
+    play_on_open = data["playOnOpen"]
     return contents
     
 radio_stations = []
@@ -633,7 +641,6 @@ def get_playlist():
             'isPlaying': is_playing,
             'time': timeAt
         }
-        print(is_playing)
         media_files.append(media_info)
     return media_files
 
@@ -797,6 +804,9 @@ def play_file(path, time = None, list_pos = None):
         data = json.loads(contents)
         print(data)
         for file in data:
+            if (file['isPlaying']):
+                time = file['time']
+                list_pos = data.index(file)
             playlist.add_media(vlc_inst.media_new(file['path']))
     elif (path.endswith('/')):
         for entry in sorted(os.scandir(path), key=lambda e: (not e.is_dir(), e.name)):

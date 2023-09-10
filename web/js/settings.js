@@ -1,12 +1,18 @@
 /* eslint-disable quotes */
 
 const settingsMenu = document.getElementById('settings');
+const moviePathsEl = document.getElementById('movie_paths');
+const showPathsEl = document.getElementById('show_paths');
+const musicPathsEl = document.getElementById('music_paths');
+const tabSettings = document.getElementById('tab_settings');
+const startupSettings = document.getElementById('startup_settings');
 
 function openSettings() {
   renderMovieSettings();
   renderShowSettings();
   renderMusicSettings();
   renderTabSettings();
+  renderStartupSettings();
   settingsMenu.style.display = 'flex';
 }
 
@@ -23,7 +29,9 @@ function saveSettings() {
     "showPaths": configVals.showPaths,
     "musicPaths": configVals.musicPaths,
     "radioEnabled": configVals.radioEnabled,
-    "gamesEnabled": configVals.gamesEnabled
+    "gamesEnabled": configVals.gamesEnabled,
+    "playOnOpen": configVals.playOnOpen,
+    "syncPath": configVals.syncPath
   };
   eel.save_settings(JSON.stringify(settingsCnfg));
   closeSettings();
@@ -38,6 +46,8 @@ async function readSettings() {
   configVals.musicPaths = json.musicPaths;
   configVals.radioEnabled = json.radioEnabled;
   configVals.gamesEnabled = json.gamesEnabled;
+  configVals.playOnOpen = json.playOnOpen;
+  configVals.syncPath = json.syncPath;
   renderTabBtns('media');
   if (configVals.radioEnabled) {
     eel.load_stations();
@@ -116,6 +126,26 @@ function renderTabSettings() {
     ` + (configVals.gamesEnabled ? 'checked' : '') + `/>
   <label for="games2">Use game launcher</label>`;
   tabSettings.innerHTML = html;
+}
+
+function renderStartupSettings() {
+  let html = `<input id="radio3" type="checkbox" onchange="changeStartupSetting(0, 'playOnOpen', 0, this)"
+  ` + (configVals.playOnOpen ? 'checked' : '') + `/>
+  <label for="radio3">Auto play last open media</label>
+  <input type="text" value="` + configVals.syncPath + `"/>
+  <button class="settings-interactable" onclick="openBrowseDialog('browse_dialog', 'folder',
+  'syncPath', 0, 'chngStartupSetting')">Browse</button>`;
+  startupSettings.innerHTML = html;
+}
+
+function chngStartupSetting(action, type, index, path = '/') {
+  if (type == 'playOnOpen') {
+    configVals.playOnOpen = path.checked;
+  } else if (type == 'syncPath') {
+    configVals.syncPath = path;
+  }
+  renderStartupSettings();
+  closeBrowseDialog('browse_dialog');
 }
 
 function chngTabSettings(e, varName) {

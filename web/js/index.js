@@ -10,16 +10,10 @@ const playlistView = document.getElementById('media_playlist');
 const subsList = document.getElementById('subs');
 const audioList = document.getElementById('audio_list');
 const progressBar = document.getElementById('progressbar');
-const moviePathsEl = document.getElementById('movie_paths');
-const showPathsEl = document.getElementById('show_paths');
-const musicPathsEl = document.getElementById('music_paths');
-const tabSettings = document.getElementById('tab_settings');
 const browseDialog = document.getElementById('browse_dialog');
 const metadataList = document.getElementById('metadata_list');
 const playBtn = document.getElementById('play_btn');
 const resizeBtn = document.getElementById('resize_btn');
-
-eel.init();
 
 window.addEventListener('beforeunload', () => { eel.on_quit(); });
 
@@ -366,6 +360,7 @@ async function getMusicFiles(path) {
   drawFiles(json);
 }
 readSettings();
+eel.init();
 //getMusicFiles('/');
 drawMediaOptions();
 
