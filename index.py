@@ -303,6 +303,8 @@ radio_playing = [False, None]
 def play_radio(station):
     global radio_stations
     global radio_playing
+    media_list_player.stop()
+    eel.sleep(1)
     if radio_playing[0]:
         radio_stations[radio_playing[1]]['time'] = round(media_player.get_time()/1000)
         radio_stations[radio_playing[1]]['fileAt'] = playlist.index_of_item(media_player.get_media())
@@ -483,7 +485,10 @@ def handle_watched_data(path, value = None):
             else:
                 return contents[name]['watched']
         
-
+@eel.expose
+def delete_metadata():
+    for file in os.scandir('./web/cached_metadata/'):
+        os.remove(file.path)
 
 @eel.expose
 def dwnld_metadata(path):

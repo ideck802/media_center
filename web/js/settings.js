@@ -189,6 +189,7 @@ function chngPath(action, type, index, path = '/') {
       renderMusicSettings();
     }
   } else if (action == 'setpath') {
+    path = path.slice(0, -1);
     if (type == 'movie') {
       console.log(configVals.moviePaths);
       configVals.moviePaths[index] = path;

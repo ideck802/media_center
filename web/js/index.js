@@ -268,6 +268,7 @@ function renderProgress(len, pos, time) {
 
 eel.expose(getSubs);
 function getSubs(subs, activeSub) {
+  subsList.innerHTML = '';
   for (var i = 0; i < subs.length; i++) {
     if (subs[i] == activeSub) {
       let option = '<option value="' + subs[i] + '" selected>' + subs[i] + '</option>';

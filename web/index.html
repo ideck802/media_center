@@ -19,7 +19,12 @@
         fwd-intrct="changeInteractLayer('.files-interactable')">
       </div>
       <div class="playlist">
-        <button onclick="savePlaylist()">Save playlist</button>
+        <div class="playlist-btns">
+          <button onclick="savePlaylist()">Save playlist</button>
+          <button onclick="eel.play_file(configVals.syncPath + 'was-playing.lst')">Resume last playlist</button>
+          <button onclick="eel.save_playlist(null, 'was-playing', null, configVals.syncPath)">Upload/sync
+            playlist</button>
+        </div>
         <div id="media_playlist" class="main-interactable" rowbreak="true"></div>
       </div>
     </div>
@@ -118,6 +123,8 @@
           <h4>Metadata</h4>
           <button class="main-interactable" onclick="eel.dwnld_metadata('all')" fwd-intrct="eel.dwnld_metadata()">Scan &
             download all movie and show metadata</button>
+          <button class="main-interactable" onclick="eel.delete_metadata()" fwd-intrct="eel.dwnld_metadata()">Delete
+            all metadata</button>
           <h4>Media Paths</h4>
           <div class="path-setting movie-paths" id="movie_paths"></div>
           <div class="path-setting show-paths" id="show_paths"></div>
@@ -134,7 +141,8 @@
   <div class="name-dialog" id="name_dialog">
     <p>Pick a name</p>
     <input type="text" id="name_box" />
-    <button class="submit" onclick="submitName()">Submit</button>
+    <button class="submit" onclick="submitName()">Choose save location</button>
+    <button class="submit" onclick="closeNameDialog()">Cancel</button>
   </div>
 
   <div class="metadata-list" id="metadata_list"></div>

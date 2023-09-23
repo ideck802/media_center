@@ -41,6 +41,8 @@ indicator.style.marginTop = (indicatorOffset + ((currentStation + 1) * indStatio
     (indHeight / 2)) + 'px';
 
 function changeStation(action, i = null) {
+  playStatic();
+  //eel.play_file('./static.mp3', 2, 0);
   if (action == 'set') {
     currentStation = i;
   } else if (action == 'prev' && currentStation > 0) {
@@ -53,6 +55,39 @@ function changeStation(action, i = null) {
     (indHeight / 2)) + 'px';
 
   eel.play_radio(currentStation);
+}
+
+function playStatic() {
+  let audio = new Audio('static.mp3');
+
+  const startTime = 1;
+  const endTime = 3;
+
+  audio.currentTime = startTime;
+  audio.play();
+  audio.volume = 1;
+
+  const fadeDuration = 1.5;
+
+  const fadeStep = 0.1; // Adjust as needed
+  const fadeInterval = fadeDuration * 1000 / (1 / fadeStep);
+  let currentVolume = 1;
+
+  // Schedule a stop with fade-out after the desired end time
+  setTimeout(() => {
+    // Fade out
+    const fadeOutInterval = setInterval(() => {
+      currentVolume -= fadeStep;
+
+      if (currentVolume <= 0) {
+        clearInterval(fadeOutInterval);
+        audio.pause();
+        audio.currentTime = 0;
+      } else {
+        audio.volume = currentVolume;
+      }
+    }, fadeInterval);
+  }, (endTime - startTime - fadeDuration) * 1000);
 }
 
 async function chngRadioPath(action, type, index, path = '/') {
